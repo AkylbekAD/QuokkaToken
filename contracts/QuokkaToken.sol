@@ -59,7 +59,7 @@ contract QuokkaToken {
     function buyToken() public payable {
         require(msg.value > 0, "You have to pay to buy QTN tokens");
         require(userBalance[owner] > 0, "No tokens left");
-        allowed[owner][msg.sender] = currentQuokkaRate() * msg.value / 1000000000000000;
+        allowed[owner][msg.sender] += currentQuokkaRate() * msg.value / 1000000000000000;
     }
 
     function burn(uint tokens) public {
