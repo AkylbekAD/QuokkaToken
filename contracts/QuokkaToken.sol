@@ -37,7 +37,7 @@ contract QuokkaToken {
     }
 
     function transfer (address to, uint tokens) public {
-        require(tokens <= userBalance[msg.sender]);
+        require(tokens <= userBalance[msg.sender], "Not enough tokens to transfer");
         userBalance[msg.sender] -= tokens;
         userBalance[to] += tokens;
         emit Result(msg.sender, to, tokens);
@@ -58,7 +58,7 @@ contract QuokkaToken {
 
     function buyToken() public payable {
         require(msg.value > 0, "You have to pay to buy QTN tokens");
-        require(userBalance[owner] > 0, "No tokens left");
+        require(userBalance[owner] > 0, "No token left");
         allowed[owner][msg.sender] += currentQuokkaRate() * msg.value / 1000000000000000;
     }
 
