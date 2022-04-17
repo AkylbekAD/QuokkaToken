@@ -2,12 +2,12 @@
 pragma solidity ^0.8.0;
 
 contract QuokkaToken {
-    string public symbol;
-    string public name;
-    uint8 public decimals;
-    uint public existingTokens;
-    uint public IPOrate;
-    address public owner;
+    string public symbol = "QTN";
+    string public name = "QuokkaToken";
+    uint8 public decimals = 9;
+    uint public existingTokens = 1000000000000000000;
+    uint public IPOrate = 1000000;
+    address public owner ;
  
     mapping(address => uint) private userBalance;
     mapping(address => mapping(address => uint)) private allowed;
@@ -15,13 +15,8 @@ contract QuokkaToken {
     event Result (address, address, uint);
  
     constructor() {
-        symbol = "QTN";
-        name = "QuokkaToken";
-        IPOrate = 1000000;
-        decimals = 9;
-        existingTokens = 1000000000 * (10**decimals);
         owner = msg.sender;
-        userBalance[owner] = existingTokens;
+        userBalance[owner] = existingTokens;    
     }
 
     function totalSupply() public view returns (uint) {
@@ -50,7 +45,8 @@ contract QuokkaToken {
     }
 
     function transferFrom(address from, address to, uint tokens) public {
-        allowed[from][msg.sender] -= tokens;
+        require(allowed[from][to] >= tokens, "Not enough allowed tokens");
+        allowed[from][to] -= tokens;
         userBalance[from] -= tokens;
         userBalance[to] += tokens;
         emit Result(from, to, tokens);

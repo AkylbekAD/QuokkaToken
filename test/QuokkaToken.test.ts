@@ -100,7 +100,7 @@ describe("QuokkaToken contract", function () {
 
     it("Revert if amount of tokens bigger then avaliable", async function () {
       buyingToken(acc1, '0.000001')
-      await expect(QuokkaTokenInterface.connect(owner).transferFrom(owner.address,acc1.address,1000000000)).to.be.reverted
+      await expect(QuokkaTokenInterface.connect(acc1).transferFrom(owner.address,acc1.address,10000000000)).to.be.revertedWith("Not enough allowed tokens")
     })
   })
 

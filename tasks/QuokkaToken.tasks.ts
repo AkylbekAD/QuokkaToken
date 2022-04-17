@@ -1,7 +1,7 @@
 import { task } from "hardhat/config";
 
 // const ContractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3" // for localhost network:
-const ContractAddress = "0xdCD31f0E3bA186e6B50B8049D3B52BEb0aaDEd1C" // for rinkeby network:
+const ContractAddress = "0x657F104eF04Ce2566446f728e50be17eA3fa76B7" // for rinkeby network:
 
 task("getContractBalance", "Prints constract`s balance")
     .setAction(async (taskArgs, hre) => {
