@@ -12,44 +12,48 @@ contract QuokkaToken {
     mapping(address => uint) private userBalance;
     mapping(address => mapping(address => uint)) private allowed;
 
-    event Result (address, address, uint);
+    event Transfer(address from, address to, uint256 value);
+    event Approval(address owner, address spender, uint256 value);
  
     constructor() {
         owner = msg.sender;
         userBalance[owner] = existingTokens;    
     }
 
-    function totalSupply() public view returns (uint) {
+    function totalSupply() public view returns(uint) {
         return userBalance[owner];
     }
 
-    function balanceOf(address tokenOwner) public view returns (uint balance) {
+    function balanceOf(address tokenOwner) public view returns(uint balance) {
         return userBalance[tokenOwner];
     }
 
-    function allowance(address tokenOwner, address spender) public view returns (uint tokens) {
+    function allowance(address tokenOwner, address spender) public view returns(uint tokens) {
         return allowed[tokenOwner][spender];
     }
 
-    function transfer (address to, uint tokens) public {
+    function transfer(address to, uint tokens) public returns(bool) {
         require(tokens <= userBalance[msg.sender], "Not enough tokens to transfer");
         userBalance[msg.sender] -= tokens;
         userBalance[to] += tokens;
-        emit Result(msg.sender, to, tokens);
+        emit Transfer(msg.sender, to, tokens);
+        return true;
     }
 
-    function approve(address spender, uint tokens) public {
+    function approve(address spender, uint tokens) public returns(bool) {
         require(userBalance[msg.sender] >= tokens, "Not enough tokens to approve");
         allowed[msg.sender][spender] = tokens;
-        emit Result(msg.sender, spender, tokens);
+        emit Approval(msg.sender, spender, tokens);
+        return true;
     }
 
-    function transferFrom(address from, address to, uint tokens) public {
+    function transferFrom(address from, address to, uint tokens) public returns(bool) {
         require(allowed[from][to] >= tokens, "Not enough allowed tokens");
         allowed[from][to] -= tokens;
         userBalance[from] -= tokens;
         userBalance[to] += tokens;
-        emit Result(from, to, tokens);
+        emit Transfer(from, to, tokens);
+        return true;
     }
 
     function buyToken() public payable {
@@ -61,13 +65,13 @@ contract QuokkaToken {
     function burn(uint tokens) public {
         userBalance[msg.sender] -= tokens;
         existingTokens -= tokens;
-        emit Result(msg.sender, msg.sender, tokens);
+        emit Transfer(msg.sender, address(0), tokens);
     }
 
     function mint(address to, uint tokens) external onlyOwner {
         userBalance[to] += tokens;
         existingTokens += tokens;
-        emit Result(owner, to, tokens);
+        emit Transfer(address(0), to, tokens);
     }
 
     function currentQuokkaRate() public view returns (uint rate) {

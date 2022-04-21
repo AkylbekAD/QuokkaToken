@@ -14,6 +14,7 @@ describe("QuokkaToken contract", function () {
   let owner: SignerWithAddress;
   let acc1: SignerWithAddress;
   let acc2: SignerWithAddress;
+  let zeroAddress = "0x0000000000000000000000000000000000000000";
 
   beforeEach(async function () {
       QuokkaToken = await ethers.getContractFactory("QuokkaToken");
@@ -91,7 +92,7 @@ describe("QuokkaToken contract", function () {
       buyingToken(acc1, '0.000001')
       const transferFrom = await QuokkaTokenInterface.connect(acc1).transferFrom(owner.address,acc1.address,1000000000)
       await transferFrom.wait();
-      expect(transferFrom).to.emit(QuokkaTokenInterface, "Result").withArgs(owner.address, acc1.address, "1000000000")
+      expect(transferFrom).to.emit(QuokkaTokenInterface, "Transfer").withArgs(owner.address, acc1.address, "1000000000")
       
       let result = await QuokkaTokenInterface.balanceOf(acc1.address)
       result = ethers.utils.formatUnits(result, 0)
@@ -109,7 +110,7 @@ describe("QuokkaToken contract", function () {
       buyingToken(acc1, '0.000001')
       const transfer = await QuokkaTokenInterface.connect(owner).transfer(acc2.address,1000000000)
       await transfer.wait();
-      expect(transfer).to.emit(QuokkaTokenInterface, "Result").withArgs(owner.address, acc2.address, "1000000000")
+      expect(transfer).to.emit(QuokkaTokenInterface, "Transfer").withArgs(owner.address, acc2.address, "1000000000")
 
       let result = await QuokkaTokenInterface.balanceOf(acc2.address)
       result = ethers.utils.formatUnits(result, 0)
@@ -126,7 +127,7 @@ describe("QuokkaToken contract", function () {
       await QuokkaTokenInterface.transfer(acc1.address,1000000000)
       const approve = await QuokkaTokenInterface.connect(acc1).approve(acc2.address,1000000000)
       await approve.wait();
-      expect(approve).to.emit(QuokkaTokenInterface, "Result").withArgs(acc1.address, acc2.address, "1000000000")
+      expect(approve).to.emit(QuokkaTokenInterface, "Approval").withArgs(acc1.address, acc2.address, "1000000000")
 
       let result = await QuokkaTokenInterface.allowance(acc1.address,acc2.address)
       result = ethers.utils.formatUnits(result, 0)
@@ -195,7 +196,7 @@ describe("QuokkaToken contract", function () {
       await QuokkaTokenInterface.connect(owner).transfer(acc1.address,1000000000)
       const burn = await QuokkaTokenInterface.connect(acc1).burn(1000000000)
       await burn.wait();
-      expect(burn).to.emit(QuokkaTokenInterface, "Result").withArgs(acc1.address, acc1.address, "1000000000")
+      expect(burn).to.emit(QuokkaTokenInterface, "Transfer").withArgs(acc1.address, zeroAddress, "1000000000")
 
       let result = await QuokkaTokenInterface.existingTokens()
       result = ethers.utils.formatUnits(result, 0)
@@ -205,7 +206,7 @@ describe("QuokkaToken contract", function () {
     it("Owner can mint new tokens and increase existingTokens of tokens", async function () {
       const mint = await QuokkaTokenInterface.connect(owner).mint(owner.address,1000000000)
       await mint.wait();
-      expect(mint).to.emit(QuokkaTokenInterface, "Result").withArgs(owner.address, owner.address, "1000000000")
+      expect(mint).to.emit(QuokkaTokenInterface, "Transfer").withArgs(zeroAddress, owner.address, "1000000000")
 
       let result = await QuokkaTokenInterface.existingTokens()
       result = ethers.utils.formatUnits(result, 0)
